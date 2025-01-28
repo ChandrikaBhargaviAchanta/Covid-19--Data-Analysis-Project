@@ -102,14 +102,20 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
+
+
 select * from portfolioproject.coviddeaths
 where continent is not null
 order by 3,4;
+
+
 
 #selecting data that we will use 
 Select location, date, total_cases, new_cases, total_deaths, population 
 from portfolioproject.coviddeaths
 order by 1,2;
+
+
 
 #looking at total cases vs total deaths in India
 #likelihood of dying if you get covid in India
@@ -118,11 +124,15 @@ from portfolioproject.coviddeaths
 where location like "india"
 order by 1,2;
 
+
+
 #looking at the total cases with respect to population in India
 Select location, date, population, total_cases,  (total_cases/ population)*100 as TotalCases_Percentage
 from portfolioproject.coviddeaths
 where location like "%ind%"
 order by 1,2;
+
+
 
 #looking at countries with highest infection rate wrt population
 Select location, population, MAX(total_cases) as HighestInfectionCount,  MAX((total_cases/ population))*100 as INFECTION_PERCENTAGE
@@ -130,6 +140,8 @@ from portfolioproject.coviddeaths
 #where location like "%ind%"
 group by location, population
 order by INFECTION_PERCENTAGE desc;
+
+
 
 #looking at countries with max death count wrt population
 Select location, MAX(CAST(total_deaths as decimal)) as HighestDeathCount  #type casting to decimal/int as we are not getting proper values since total_Deaths is in varchar format
@@ -143,12 +155,16 @@ where continent IS NOT NULL
 group by continent
 order by HighestDeathCount desc;
 
+
+
 #Number of new cases and new deaths each day in a particular country
 Select location, date, SUM(new_cases) as new_cases_each_day, SUM(new_deaths) as new_deaths_each_day, (sum(new_deaths)/sum(new_cases))*100 as percentage_of_new_deaths
 from portfolioproject.coviddeaths
 where location like "%ind%" 
 group by date
 order by 1,2;
+
+
 
 #looking at total population vs vaccinations
 select deaths.continent, deaths.location, deaths.date, deaths.population, vaccine.new_vaccinations,
@@ -160,6 +176,8 @@ on deaths.location = vaccine.location
 and deaths.date = vaccine.date
 where deaths.continent is not null
 order by 2,3;
+
+
 
 #To calculate total population vs number of vaccines, we need to use the vaccinations_until_theDate col, but we cannot implement a new column in a calculation
 #in order to do so, we should create a temp table/ CTE(common table expression- with) and add the new col to it and then perform the required operations.
@@ -177,6 +195,9 @@ and deaths.date = vaccine.date
 where deaths.continent is not null
 )
 select *, (vaccinations_until_theDate/population)*100 Percentage_pop_vac from PopVsVac;
+
+
+
 
 
 #temp table
@@ -201,6 +222,8 @@ on deaths.location = vaccine.location
 and deaths.date = vaccine.date
 where deaths.continent is not null;
 select *, (vaccinations_until_theDate/population)*100 Percentage_pop_vac from PercentPopulationVaccinated;
+
+
 
 
 #CREATING VIEWS (to create a virtual table, to save in DB server, to increase the security and to only show the data which is required and not the whole table)
